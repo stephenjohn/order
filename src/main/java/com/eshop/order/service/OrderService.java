@@ -9,6 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 @Service
 public class OrderService {
     private final OrderRepository orderRepository;
@@ -30,6 +34,41 @@ public class OrderService {
        Order order = convertToEntity(orderDTO);
        Order saveOrder = orderRepository.save(order);
        return convertToDto(saveOrder);
+   }
+
+    /**
+     * retreive the order by ID
+     * @param orderId
+     * @return
+     * @throws NotFoundException
+     */
+
+   public OrderDTO getOrderById(Long orderId) throws NotFoundException {
+       Optional<Order> order = orderRepository.findById(orderId);
+       if(order.isPresent()){
+           return convertToDto(order.get());
+       }else {
+           throw new NotFoundException("Order not found with ID: "+ orderId);
+       }
+
+   }
+
+    /**
+     * retrieve the orders by userId
+     * @param userId
+     * @return List of orders
+     * @throws NotFoundException
+     */
+
+   public List<OrderDTO> getOrderByUserId(Long userId) throws NotFoundException{
+      List<Order> listOfOrderByUserId = orderRepository.findByUserId(userId);
+      if (listOfOrderByUserId != null){
+         return listOfOrderByUserId.stream().map(this::convertToDto)
+                  .collect(Collectors.toList());
+
+      }else {
+          throw new NotFoundException("User ID not found");
+      }
    }
 
    private Order convertToEntity(OrderDTO orderDTO) throws NotFoundException {

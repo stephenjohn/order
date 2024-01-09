@@ -4,10 +4,10 @@ import com.eshop.order.dto.OrderDTO;
 import com.eshop.order.service.OrderService;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/orders")
@@ -22,4 +22,14 @@ public class OrderController {
     public OrderDTO createOrder(@RequestBody OrderDTO orderDTO)throws NotFoundException{
         return orderService.saveOrder(orderDTO);
     }
-}
+    @GetMapping("/{orderId}")
+    public ResponseEntity<OrderDTO> getOrderById (@PathVariable Long orderId) throws NotFoundException {
+        OrderDTO orderDTO = orderService.getOrderById(orderId);
+        return ResponseEntity.ok(orderDTO);
+    }
+    @GetMapping("/users/{userId}/orders")
+    public ResponseEntity<List<OrderDTO>> getOrderByUserId(@PathVariable Long userId) throws NotFoundException {
+        List<OrderDTO> listOfOrder = orderService.getOrderByUserId(userId);
+        return ResponseEntity.ok(listOfOrder);
+    }
+    }

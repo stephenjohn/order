@@ -60,9 +60,9 @@ public class OrderService {
      * @throws NotFoundException
      */
 
-   public List<OrderDTO> getOrderByUserId(Long userId) throws NotFoundException{
+   public List<OrderDTO> getAllOrderByUserId(Long userId) throws NotFoundException{
       List<Order> listOfOrderByUserId = orderRepository.findByUserId(userId);
-      if (listOfOrderByUserId != null){
+      if (!listOfOrderByUserId.isEmpty()){
          return listOfOrderByUserId.stream().map(this::convertToDto)
                   .collect(Collectors.toList());
 
@@ -71,7 +71,7 @@ public class OrderService {
       }
    }
 
-   private Order convertToEntity(OrderDTO orderDTO) throws NotFoundException {
+   public Order convertToEntity(OrderDTO orderDTO) throws NotFoundException {
         Order order = new Order();
         order.setTotalPrice(orderDTO.getTotalPrice());
         Status status1 = Status.valueOf(orderDTO.getStatus());
@@ -81,7 +81,7 @@ public class OrderService {
 
     }
 
-    private OrderDTO convertToDto(Order order) {
+    public OrderDTO convertToDto(Order order) {
         return new OrderDTO(
                 order.getId(),
                 order.getTotalPrice(),

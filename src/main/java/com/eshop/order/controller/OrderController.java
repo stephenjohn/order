@@ -12,7 +12,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/orders")
 public class OrderController {
-    private OrderService orderService;
+    private final OrderService orderService;
     @Autowired
     public OrderController(OrderService orderService){
         this.orderService = orderService;
@@ -28,8 +28,8 @@ public class OrderController {
         return ResponseEntity.ok(orderDTO);
     }
     @GetMapping("/users/{userId}/orders")
-    public ResponseEntity<List<OrderDTO>> getOrderByUserId(@PathVariable Long userId) throws NotFoundException {
-        List<OrderDTO> listOfOrder = orderService.getOrderByUserId(userId);
+    public ResponseEntity<List<OrderDTO>> getAllOrderByUserId(@PathVariable Long userId) throws NotFoundException {
+        List<OrderDTO> listOfOrder = orderService.getAllOrderByUserId(userId);
         return ResponseEntity.ok(listOfOrder);
     }
     }

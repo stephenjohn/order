@@ -1,6 +1,6 @@
 package com.eshop.order.entity;
 
-import lombok.Data;
+import lombok.*;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -9,7 +9,11 @@ import java.util.Set;
 
 @Entity
 @Table(name = "orders")
+@NoArgsConstructor
+@AllArgsConstructor
 @Data
+@Builder
+
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -16,6 +16,8 @@ import java.util.stream.Collectors;
 @Service
 public class OrderService {
     private final OrderRepository orderRepository;
+    @Autowired
+    private OrderMapper orderMapper;
 
 
     @Autowired
@@ -31,9 +33,9 @@ public class OrderService {
      */
     @Transactional
    public OrderDTO saveOrder(OrderDTO orderDTO) throws NotFoundException {
-       Order order = convertToEntity(orderDTO);
+       Order order = orderMapper.convertToEntity(orderDTO);
        Order saveOrder = orderRepository.save(order);
-       return convertToDto(saveOrder);
+       return orderMapper.convertToDto(saveOrder);
    }
 
     /**
@@ -46,7 +48,7 @@ public class OrderService {
    public OrderDTO getOrderById(Long orderId) throws NotFoundException {
        Optional<Order> order = orderRepository.findById(orderId);
        if(order.isPresent()){
-           return convertToDto(order.get());
+           return orderMapper.convertToDto(order.get());
        }else {
            throw new NotFoundException("Order not found with ID: "+ orderId);
        }
@@ -63,31 +65,11 @@ public class OrderService {
    public List<OrderDTO> getAllOrderByUserId(Long userId) throws NotFoundException{
       List<Order> listOfOrderByUserId = orderRepository.findByUserId(userId);
       if (!listOfOrderByUserId.isEmpty()){
-         return listOfOrderByUserId.stream().map(this::convertToDto)
+         return listOfOrderByUserId.stream().map(e -> orderMapper.convertToDto(e))
                   .collect(Collectors.toList());
 
       }else {
           throw new NotFoundException("User ID not found");
       }
    }
-
-   public Order convertToEntity(OrderDTO orderDTO) throws NotFoundException {
-        Order order = new Order();
-        order.setTotalPrice(orderDTO.getTotalPrice());
-        Status status1 = Status.valueOf(orderDTO.getStatus());
-        order.setStatus(status1.toString());
-        order.setUserId(orderDTO.getUserId());
-        return order;
-
-    }
-
-    public OrderDTO convertToDto(Order order) {
-        return new OrderDTO(
-                order.getId(),
-                order.getTotalPrice(),
-                order.getStatus().toString(),
-                order.getUserId());
-
-    }
-
 }

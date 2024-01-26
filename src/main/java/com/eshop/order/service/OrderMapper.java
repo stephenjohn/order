@@ -1,9 +1,12 @@
 package com.eshop.order.service;
 
 import com.eshop.order.dto.OrderDTO;
+import com.eshop.order.dto.OrderItemDTO;
 import com.eshop.order.entity.Order;
+import com.eshop.order.entity.OrderItem;
 import com.eshop.order.entity.Status;
 import com.eshop.order.repository.OrderRepository;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +34,21 @@ public class OrderMapper {
         }
     }
 
+    public OrderItem convertToEntity(OrderItemDTO orderItemDTO) throws NotFoundException {
+        OrderItem orderItem = new OrderItem();
+        orderItem.setPrice(orderItemDTO.getPrice());
+        orderItem.setQuantity(orderItemDTO.getQuantity());
+        orderItem.setProductId(orderItemDTO.getProductId());
+        if (orderItemDTO.getOrderId() != null) {
+            Order order = orderRepository.findById(orderItemDTO.getOrderId())
+                    .orElseThrow(() -> new NotFoundException("orderId not found"));
+            orderItem.setOrder(order);
+        } else {
+            throw new IllegalArgumentException("orderID is required");
+        }
+        return orderItem;
+    }
+
     /**
      * method to convertToDto
      * @param order
@@ -46,6 +64,13 @@ public class OrderMapper {
         return orderDTO;
     }
 
-
+    public OrderItemDTO convertToDto(OrderItem orderItem){
+        return new OrderItemDTO(
+                orderItem.getId(),
+                orderItem.getQuantity(),
+                orderItem.getPrice(),
+                orderItem.getOrder() !=null ? orderItem.getOrder().getId() : null,
+                orderItem.getProductId());
+    }
 
 }

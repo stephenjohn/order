@@ -1,8 +1,10 @@
 package com.eshop.order.service;
 
 import com.eshop.order.dto.OrderDTO;
+import com.eshop.order.dto.OrderItemDTO;
 import com.eshop.order.entity.Order;
-import com.eshop.order.entity.Status;
+import com.eshop.order.entity.OrderItem;
+import com.eshop.order.repository.OrderItemRepository;
 import com.eshop.order.repository.OrderRepository;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,13 +18,15 @@ import java.util.stream.Collectors;
 @Service
 public class OrderService {
     private final OrderRepository orderRepository;
+    private final OrderItemRepository orderItemRepository;
     @Autowired
     private OrderMapper orderMapper;
 
 
     @Autowired
-    public OrderService(OrderRepository orderRepository){
+    public OrderService(OrderRepository orderRepository, OrderItemRepository orderItemRepository){
         this.orderRepository = orderRepository;
+        this.orderItemRepository = orderItemRepository;
     }
 
     /**
@@ -36,6 +40,20 @@ public class OrderService {
        Order order = orderMapper.convertToEntity(orderDTO);
        Order saveOrder = orderRepository.save(order);
        return orderMapper.convertToDto(saveOrder);
+   }
+
+    /**
+     * method to save the orderItem
+     * @param orderItemDTO
+     * @return
+     * @throws NotFoundException
+     */
+    @Transactional
+   public OrderItemDTO saveOrderItem(OrderItemDTO orderItemDTO) throws NotFoundException {
+       OrderItem orderItem = orderMapper.convertToEntity(orderItemDTO);
+       OrderItem saveOrderItem = orderItemRepository.save(orderItem);
+       return orderMapper.convertToDto(saveOrderItem);
+
    }
 
     /**

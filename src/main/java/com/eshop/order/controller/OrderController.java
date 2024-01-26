@@ -1,6 +1,7 @@
 package com.eshop.order.controller;
 
 import com.eshop.order.dto.OrderDTO;
+import com.eshop.order.dto.OrderItemDTO;
 import com.eshop.order.service.OrderService;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,10 @@ public class OrderController {
     @PostMapping
     public OrderDTO createOrder(@RequestBody OrderDTO orderDTO)throws NotFoundException{
         return orderService.saveOrder(orderDTO);
+    }
+    @PostMapping("/orderItem")
+    public OrderItemDTO createOrderItem(@RequestBody OrderItemDTO orderItemDTO)throws NotFoundException{
+        return orderService.saveOrderItem(orderItemDTO);
     }
     @GetMapping("/{orderId}")
     public ResponseEntity<OrderDTO> getOrderById (@PathVariable Long orderId) throws NotFoundException {
